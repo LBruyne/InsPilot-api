@@ -1,2 +1,3 @@
 # Refinity-api
-API server for Refinity
+
+API server for Refinity。
