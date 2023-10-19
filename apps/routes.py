@@ -15,13 +15,21 @@ def index():
 @apps.route('/generate', methods=['POST'])
 def generate():
     try:
-        app_id = request.json.get('appid')
-        type_ = request.json.get('type')
+        # app_id = int(request.form.get('appid'))
+        # type_ = int(request.form.get('type'))
+        # prompts = request.form.get('prompts')
+        # data = request.files['image'].read()
+        app_id = int(request.json.get('appid'))
+        type_ = int(request.json.get('type'))
         prompts = request.json.get('prompts')
 
         response_data = {}
         if app_id == 0:
+            # response_data = paintHandler.handle_request(type_, prompts, data)
             response_data = paintHandler.handle_request(type_, prompts)
+        else:
+            raise BusinessException("应用不存在")
+        
         return jsonify(ResponseWrapper.success(data=response_data))
     except BusinessException as be:
         return jsonify(ResponseWrapper.fail(code=be.code, message=be.message))

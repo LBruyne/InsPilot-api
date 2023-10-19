@@ -1,3 +1,4 @@
+# import logging
 from flask import Flask
 
 from apps.routes import apps
@@ -5,6 +6,8 @@ from apps.routes import apps
 from flask_cors import CORS
 
 app = Flask(__name__)
+
+# logging.basicConfig(level=logging.DEBUG)
 
 CORS(app)
 

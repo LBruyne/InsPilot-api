@@ -1,6 +1,5 @@
 import agent.sd
-from agent.gpt import chat
-from apps.paint.logic import rapid_divergence_stimulus
+from apps.paint.logic import rapid_divergence_stimulus, deep_divergence_stimulus, convergence_1_stimulus
 from apps.utils import BusinessException, BUSINESS_FAIL
 
 
@@ -9,9 +8,9 @@ def handle_request(type_, prompts):
         if type_ == 0:
             result = rapid_divergence_stimulus(prompts)
         elif type_ == 1:
-            result = agent.sd.text2Image(prompts)
-        # elif type_ == 2:
-        #     result = generate_poem(prompts)
+            result = deep_divergence_stimulus(prompts)
+        elif type_ == 2:
+            result = convergence_1_stimulus(prompts)
         # elif type_ == 3:
         #     result = generate_article(prompts)
         else:

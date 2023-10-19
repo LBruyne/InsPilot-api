@@ -19,3 +19,6 @@
 
 # Go workspace file
 go.work
+
+__pycache__
+**/__pycache__

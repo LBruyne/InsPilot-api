@@ -1,38 +1,67 @@
-import base64
-import io
-
 import requests
 from PIL import Image
 
 import config
 from agent.utils import AgentException
 
+from settings.sd_default import sd_default_options
 
-def call_sdapi(endpoint: str, params):
+from threading import Semaphore
+from queue import Queue
+
+class SDInstance:
+    def __init__(self, url):
+        self.url = url
+
+class SDInstancePool:
+    def __init__(self, sd_urls):
+        self.sd_instances = Queue()
+        for url in sd_urls:
+            self.sd_instances.put(SDInstance(url))
+        self.semaphore = Semaphore(len(sd_urls))
+        
+    def text2Image(self, task):
+        self.semaphore.acquire()  
+        sd_instance = self.sd_instances.get()  
+        try:
+            url = sd_instance.url + config.SD_T2I_ENDPOINT
+            payload = {
+                "prompt": task["prompt"],
+                "negative_prompt": task["negative_prompt"],
+            }
+            
+            payload.update(sd_default_options)
+            
+            if task["options"] is not None:
+                payload.update(task["options"])
+
+            print(task["index"])
+            print(payload)
+            r = post_sdapi(url, payload)
+            return r['images'][0]
+        except AgentException as e:
+            print(f"Error: {str(e)}")
+            return ""
+        finally:
+            self.sd_instances.put(sd_instance) 
+            self.semaphore.release()  
+        
+
+def call_sdapi(url: str, params):
     try:
-        response = requests.get(config.SD_ENDPOINT + endpoint, params=params)
+        response = requests.get(url, params=params)
         response.raise_for_status()
         return response.json()
     except requests.RequestException as e:
-        raise AgentException(f"调用 Stable Diffusion 失败，URI {str(endpoint)}，{str(e)}")
+        raise AgentException(f"调用 Stable Diffusion 失败，URI {str(url)}，{str(e)}")
 
 
-def post_sdapi(endpoint: str, payload, headers=None):
+def post_sdapi(url: str, payload, headers=None):
     try:
-        response = requests.post(config.SD_ENDPOINT + endpoint, json=payload, headers=headers)
+        response = requests.post(url, json=payload, headers=headers)
         response.raise_for_status()
         return response.json()
     except requests.RequestException as e:
-        raise AgentException(f"调用 Stable Diffusion 失败：URI {str(endpoint)}，{str(e)}")
+        raise AgentException(f"调用 Stable Diffusion 失败：URI {str(url)}，{str(e)}")
 
-
-def text2Image(prompt: str):
-    endpoint = config.SD_T2I_ENDPOINT
-
-    payload = {
-        "prompt": prompt,
-        "steps": 5
-    }
-
-    r = post_sdapi(endpoint, payload)
-    return r['images'][0]
+pool = SDInstancePool(config.SD_ENDPOINTS)
