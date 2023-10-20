@@ -197,7 +197,7 @@ def convergence_1_stimulus(prompts):
             raise BusinessException(BUSINESS_FAIL, '生成目标数量不一致')
 
         result = DesignCreative.array_to_dict(
-            DesignCreative.from_convergence_0(a_images=abstract_images, c_images=concrete_images,
+            DesignCreative.from_convergence_1(a_images=abstract_images, c_images=concrete_images,
                                               c_texts=concrete_texts))
 
         return {
@@ -268,7 +268,7 @@ def convergence_2_stimulus(prompts):
             raise BusinessException(BUSINESS_FAIL, '生成目标数量不一致')
 
         result = DesignCreative.array_to_dict(
-            DesignCreative.from_convergence_1(a_images=abstract_images, c_images=concrete_images,
+            DesignCreative.from_convergence_2(a_images=abstract_images, c_images=concrete_images,
                                               c_texts=concrete_texts))
 
         return {

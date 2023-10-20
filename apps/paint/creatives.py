@@ -35,10 +35,9 @@ class DesignCreative:
         return creatives
 
     @classmethod
-    def from_convergence_0(cls, c_images: [], a_images: [], c_texts: []):
-        creatives = []
+    def from_convergence_1(cls, c_images: [], a_images: [], c_texts: []):
+        creative = cls(cls.ConvergenceGroupOne, cls.Direct)
         for i in range(len(c_images)):
-            creative = cls(cls.ConvergenceGroupOne, cls.Direct)
             creative.items.append(
                 DesignCreativeItem(
                     item_type=DesignCreativeItem.GroupTypeOne,
@@ -49,11 +48,10 @@ class DesignCreative:
                     ]
                 )
             )
-            creatives.append(creative)
-        return creatives
+        return creative
 
     @classmethod
-    def from_convergence_1(cls, c_images: [], a_images: [], c_texts: []):
+    def from_convergence_2(cls, c_images: [], a_images: [], c_texts: []):
         creatives = []
         for i in range(len(c_images)):
             creative = cls(cls.ConvergenceGroupTwo, cls.Direct)
