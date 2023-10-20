@@ -23,7 +23,6 @@ def generate():
         type_ = int(request.json.get('type'))
         prompts = request.json.get('prompts')
 
-        response_data = {}
         if app_id == 0:
             # response_data = paintHandler.handle_request(type_, prompts, data)
             response_data = paintHandler.handle_request(type_, prompts)

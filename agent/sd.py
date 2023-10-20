@@ -1,17 +1,17 @@
+from queue import Queue
+from threading import Semaphore
+
 import requests
-from PIL import Image
 
 import config
 from agent.utils import AgentException
-
 from settings.sd_default import sd_default_options
 
-from threading import Semaphore
-from queue import Queue
 
 class SDInstance:
     def __init__(self, url):
         self.url = url
+
 
 class SDInstancePool:
     def __init__(self, sd_urls):
@@ -19,19 +19,19 @@ class SDInstancePool:
         for url in sd_urls:
             self.sd_instances.put(SDInstance(url))
         self.semaphore = Semaphore(len(sd_urls))
-        
+
     def text2Image(self, task):
-        self.semaphore.acquire()  
-        sd_instance = self.sd_instances.get()  
+        self.semaphore.acquire()
+        sd_instance = self.sd_instances.get()
         try:
             url = sd_instance.url + config.SD_T2I_ENDPOINT
             payload = {
                 "prompt": task["prompt"],
                 "negative_prompt": task["negative_prompt"],
             }
-            
+
             payload.update(sd_default_options)
-            
+
             if task["options"] is not None:
                 payload.update(task["options"])
 
@@ -43,9 +43,9 @@ class SDInstancePool:
             print(f"Error: {str(e)}")
             return ""
         finally:
-            self.sd_instances.put(sd_instance) 
-            self.semaphore.release()  
-        
+            self.sd_instances.put(sd_instance)
+            self.semaphore.release()
+
 
 def call_sdapi(url: str, params):
     try:
@@ -63,5 +63,6 @@ def post_sdapi(url: str, payload, headers=None):
         return response.json()
     except requests.RequestException as e:
         raise AgentException(f"调用 Stable Diffusion 失败：URI {str(url)}，{str(e)}")
+
 
 pool = SDInstancePool(config.SD_ENDPOINTS)

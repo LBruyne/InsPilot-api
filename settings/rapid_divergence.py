@@ -48,7 +48,9 @@ sd_positive_0 = (
 )
 
 sd_negative_0 = (
-    '(((human, man, girl, boy, hand, people, person))), (worst quality:2), (low quality:2), (normal quality:2), lowres, ((monochrome)), ((grayscale)), cropped, text, jpeg artifacts, signature, watermark, username, sketch, cartoon, drawing, anime, duplicate, blurry, semi-realistic, out of frame, ugly, deformed'
+    '(((human, man, girl, boy, hand, people, person))), (worst quality:2), (low quality:2), (normal quality:2), '
+    'lowres, ((monochrome)), ((grayscale)), cropped, text, jpeg artifacts, signature, watermark, username, sketch, '
+    'cartoon, drawing, anime, duplicate, blurry, semi-realistic, out of frame, ugly, deformed'
 )
 
 sd_options_0 = {

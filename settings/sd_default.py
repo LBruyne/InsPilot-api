@@ -1,5 +1,5 @@
 sd_default_options = {
-    "Model":'sd_xl_base_1.0', 
+    "Model": 'sd_xl_base_1.0',
     "width": 1024,
     "height": 576,
     "cfg_scale": 5,

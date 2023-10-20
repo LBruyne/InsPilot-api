@@ -1,4 +1,3 @@
-import agent.sd
 from apps.paint.logic import rapid_divergence_stimulus, deep_divergence_stimulus, convergence_1_stimulus
 from apps.utils import BusinessException, BUSINESS_FAIL
 

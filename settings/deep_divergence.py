@@ -23,22 +23,25 @@ prompt_deep_divergence_2 = (
     'stable diffusion是一款利用深度学习的文生图模型，支持通过使用提示词来产生新的图像，描述要包含或省略的元素。'
     '下面我将说明prompt的生成要求：'
     '（1）这里的prompt主要用于描述一个场景，首先需要将场景的内容翻译成英文，作为prompt的一部分。'
-    '（2）prompt还需要包括对场景中的细节、场景光线、视角的描述，细节越多越好。'
+    '（2）prompt需要包括对物品外观、材质、形状、结构、光线、视角的描述，细节越多越好。'
     '（3）用英语短句来描述。'
     '（4）使用英文半角,做分隔符分隔提示词，每个提示词不要带引号。'
     '（5）prompt中不能带有-和，单词不能重复。'
-    '例如，当场景是森林时，可能的提示词是：forest, grass, trees, moss, sunlight, distant, morning, quietness '
+    '例如，当产品是跑步机时，可能的提示词是：treadmill, technical sense, metal material, dark color, touch screen, soft lightw, front view'
     '输出要求：只需要输出提示词的内容，一组提示词之间用#隔开，不要有其他任何的文本，包括对于提示词的解释内容'
     '场景：<{input}>'
 )
 
 sd_positive_0 = (
     '((({input}))),'
-    'bestquality, ultradetailed, masterpiece, realistic, whitebackground, futuristic, finely detailed, purism, ue 5, a computer rendering, minimalism, octane render, 4k'
+    'bestquality, ultradetailed, masterpiece, realistic, whitebackground, futuristic, finely detailed, purism, ue 5, '
+    'a computer rendering, minimalism, octane render, 4k'
 )
 
 sd_negative_0 = (
-    '(((human, man, girl, boy, hand, people, person))), (worst quality:2), (low quality:2), (normal quality:2), lowres, ((monochrome)), ((grayscale)), cropped, text, jpeg artifacts, signature, watermark, username, sketch, cartoon, drawing, anime, duplicate, blurry, semi-realistic, out of frame, ugly, deformed'
+    '(((human, man, girl, boy, hand, people, person))), (worst quality:2), (low quality:2), (normal quality:2), '
+    'lowres, ((monochrome)), ((grayscale)), cropped, text, jpeg artifacts, signature, watermark, username, sketch, '
+    'cartoon, drawing, anime, duplicate, blurry, semi-realistic, out of frame, ugly, deformed'
 )
 
 sd_options_0 = {
