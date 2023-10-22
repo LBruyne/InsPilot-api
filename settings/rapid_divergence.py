@@ -44,13 +44,11 @@ prompt_rapid_divergence_3 = (
 
 sd_positive_0 = (
     '((({input}))),'
-    'bestquality, ultradetailed, masterpiece, ((realistic)), finely detailed, purism, minimalism, 4k'
+    '(photorealistic:1.5),bestquality,ultradetailed,masterpiece,realistic,finely detailed,purism,minimalism,4k'
 )
 
 sd_negative_0 = (
-    '(((human, man, girl, boy, hand, people, person))), (worst quality:2), (low quality:2), (normal quality:2), '
-    'lowres, ((monochrome)), ((grayscale)), cropped, text, jpeg artifacts, signature, watermark, username, sketch, '
-    'cartoon, drawing, anime, duplicate, blurry, semi-realistic, out of frame, ugly, deformed'
+    '(worst quality:1.4),people,man,woman,flame,Cloud,(low quality:1.4),(normal quality:1.5),lowres,((monochrome)),((grayscale)),cropped,text,jpeg,artifacts,signature,watermark,username,sketch,cartoon,drawing,anime,duplicate,blurry,semi-realistic,out of frame,ugly,deformed,weird colors,EasyNegative,flame'
 )
 
 sd_options_0 = {

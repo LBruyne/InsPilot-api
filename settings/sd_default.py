@@ -7,5 +7,5 @@ sd_default_options = {
     "sampler_name": "DPM++ 2M SDE Karras",
     "denoising_strength": 0.7,
     "styles": ["photographic"],
-    "steps": 40
+    "steps": 30
 }

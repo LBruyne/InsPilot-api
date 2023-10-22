@@ -23,7 +23,7 @@ class ResponseWrapper:
 
 
 class BusinessException(Exception):
-    def __init__(self, message, code=BUSINESS_FAIL):
+    def __init__(self, code=BUSINESS_FAIL, message=''):
         self.code = code
         self.message = message
         super().__init__(self.message)

@@ -38,10 +38,18 @@ class SDInstancePool:
             print(task["index"])
             print(payload)
             r = post_sdapi(url, payload)
-            return r['images'][0]
+            return {
+                "index": task["index"],
+                "type": task["task_type"],
+                "image": r['images'][0]
+            }
         except AgentException as e:
             print(f"Error: {str(e)}")
-            return ""
+            return {
+                "index": task["index"],
+                "type": task["task_type"],
+                "image": ""
+            }
         finally:
             self.sd_instances.put(sd_instance)
             self.semaphore.release()

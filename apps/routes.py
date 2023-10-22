@@ -27,7 +27,7 @@ def generate():
             # response_data = paintHandler.handle_request(type_, prompts, data)
             response_data = paintHandler.handle_request(type_, prompts)
         else:
-            raise BusinessException("应用不存在")
+            raise BusinessException(message="应用不存在")
         
         return jsonify(ResponseWrapper.success(data=response_data))
     except BusinessException as be:

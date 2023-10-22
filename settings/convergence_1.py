@@ -34,14 +34,11 @@ prompt_convergence_2 = (
 
 sd_positive_0 = (
     '((({input}))),'
-    'bestquality, ultradetailed, masterpiece, realistic, whitebackground, futuristic, finely detailed, purism, ue 5, '
-    'a computer rendering, minimalism, octane render, 4k'
+    '(photorealistic:1.5),bestquality,ultradetailed,masterpiece,realistic,finely detailed,purism,minimalism,4k'
 )
 
 sd_negative_0 = (
-    '(((human, man, girl, boy, hand, people, person))), (worst quality:2), (low quality:2), (normal quality:2), '
-    'lowres, ((monochrome)), ((grayscale)), cropped, text, jpeg artifacts, signature, watermark, username, sketch, '
-    'cartoon, drawing, anime, duplicate, blurry, semi-realistic, out of frame, ugly, deformed'
+    '(worst quality:1.4),people,man,woman,flame,Cloud,(low quality:1.4),(normal quality:1.5),lowres,((monochrome)),((grayscale)),cropped,text,jpeg,artifacts,signature,watermark,username,sketch,cartoon,drawing,anime,duplicate,blurry,semi-realistic,out of frame,ugly,deformed,weird colors,EasyNegative,flame'
 )
 
 sd_options_0 = {
@@ -59,7 +56,7 @@ prompt_convergence_3 = (
 )
 
 prompt_convergence_4 = (
-    '我将告诉你{num}个产品设计方案（用<>括起来的，产品之间用#隔开），请你为我生成3个相应的用于stable diffusion的prompt。stable '
+    '我将告诉你{num}个产品设计方案（用<>括起来的，产品之间用#隔开），请你为我生成{num}个相应的用于stable diffusion的prompt。stable '
     'diffusion是一款利用深度学习的文生图模型，支持通过使用提示词来产生新的图像，描述要包含或省略的元素。我在这里引入stable diffusion算法中的prompt概念，又被称为提示符。'
     '下面我将说明prompt的生成要求：'
     '（1）这里的prompt主要用于描述一个场景，首先需要将场景的内容翻译成英文，作为prompt的一部分。'
@@ -67,21 +64,18 @@ prompt_convergence_4 = (
     '（3）用英语短句来描述。'
     '（4）使用英文半角,做分隔符分隔提示词，每个提示词不要带引号。'
     '（5）prompt中不能带有-和，单词不能重复。'
-    '例如，当产品是跑步机时，可能的提示词是：treadmill, technical sense, metal material, dark color, touch screen, soft lightw, front view'
+    '例如，当产品是跑步机时，可能的提示词是：treadmill, technical sense, metal material, dark color, touch screen, soft light'
     '输出要求：只需要输出提示词的内容，一组提示词之间用#隔开，不要有其他任何的文本，包括对于提示词的解释内容'
     '设计方案：<{input}>'
 )
 
 sd_positive_1 = (
     '((({input}))),'
-    'bestquality, ultradetailed, masterpiece, realistic, whitebackground, futuristic, finely detailed, purism, ue 5, '
-    'a computer rendering, minimalism, octane render, 4k'
+    '(white background:1.5),Actual product pictures,(Product Design:1.3),intelligent,industrial products,Creative,Industrial Products,sense of future,complete view,High Quality,minimalistic futuristic design,emauromin style,finely detailed,64k,blender,purism,ue 5,minimalism,photorealistic'
 )
 
 sd_negative_1 = (
-    '(((human, man, girl, boy, hand, people, person))), (worst quality:2), (low quality:2), (normal quality:2), '
-    'lowres, ((monochrome)), ((grayscale)), cropped, text, jpeg artifacts, signature, watermark, username, sketch, '
-    'cartoon, drawing, anime, duplicate, blurry, semi-realistic, out of frame, ugly, deformed'
+    '(worst quality:1.4),Nothing in the background,people, man, woman, flame,Cloud,(low quality:1.4),(normal quality:1.5),lowres,((monochrome)),((grayscale)),cropped,text,jpeg,artifacts,signature,watermark,username,sketch,cartoon,drawing,anime,duplicate,blurry,semi-realistic,out of frame,ugly,deformed,weird colors,EasyNegative,flame,'
 )
 
 sd_options_1 = {
