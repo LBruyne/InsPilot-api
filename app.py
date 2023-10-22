@@ -14,5 +14,5 @@ CORS(app)
 app.register_blueprint(apps)
 
 if __name__ == '__main__':
-    app.config['DEBUG'] = True
+    # app.config['DEBUG'] = True
     app.run(host='0.0.0.0', port=5000)
