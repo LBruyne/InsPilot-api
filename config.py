@@ -16,6 +16,7 @@ SD_ENDPOINTS = [
     "http://127.0.0.1:7866",
     "http://127.0.0.1:7867",
     "http://127.0.0.1:7868",
+    "http://127.0.0.1:7869"
 ]
 SD_T2I_ENDPOINT = "/sdapi/v1/txt2img"
 SD_I2I_ENDPOINT = "/sdapi/v1/img2img"
