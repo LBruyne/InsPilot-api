@@ -24,4 +24,9 @@ SD_I2I_ENDPOINT = "/sdapi/v1/img2img"
 # APPs and types
 APP_PAINT = 0
 
+# MongoDB config
+MONGO_HOST = 'mongodb://127.0.0.1:27017/'
+MONGO_DB = 'Refinity'
+
+
 

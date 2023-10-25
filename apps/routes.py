@@ -1,6 +1,7 @@
 from flask import request, jsonify, Blueprint
 
 from apps.paint import handler as paintHandler
+from apps.paint import logic as paintLogic
 
 from apps.utils import ResponseWrapper, BusinessException, BUSINESS_FAIL
 
@@ -38,10 +39,10 @@ def generate():
 @apps.route('/paint/save', methods=['POST'])
 def paintSave():
     try:
-        username = int(request.json.get('username'))
-        # TODO
-        
-        return jsonify(ResponseWrapper.success(data=response_data))
+        username = request.json.get('username')
+        data = request.json.get('data')
+        paintLogic.save(username, data)
+        return jsonify(ResponseWrapper.success())
     except BusinessException as be:
         return jsonify(ResponseWrapper.fail(code=be.code, message=be.message))
     except Exception as e:
@@ -50,8 +51,8 @@ def paintSave():
 @apps.route('/paint/start', methods=['POST'])
 def paintStart():
     try:
-        username = int(request.json.get('username'))
-        response_data = 
+        username = request.json.get('username')
+        response_data = paintLogic.start(username)
         return jsonify(ResponseWrapper.success(data=response_data))
     except BusinessException as be:
         return jsonify(ResponseWrapper.fail(code=be.code, message=be.message))

@@ -7,6 +7,13 @@ from settings import rapid_divergence, deep_divergence, convergence_1, convergen
 
 from concurrent.futures import ThreadPoolExecutor
 
+from pymongo import MongoClient
+import config
+
+mongo_client = MongoClient(config.MONGO_HOST)
+mongo_db = mongo_client[config.MONGO_DB]
+mongo_users_collection = mongo_db['users']
+
 def parse_generated(generated_text):
     return generated_text.strip().split('#')
 
@@ -255,5 +262,54 @@ def convergence_2_stimulus(prompts):
     except Exception as e:
         raise e
 
+
 def start(username: str):
-    
+    try:
+        if username == '':
+            raise BusinessException(BUSINESS_FAIL, '用户名字为空')
+        user = mongo_users_collection.find_one({"username": username})
+        if user is None:
+            # 用户不存在，创建新文档
+            user_data = {
+                "username": username,
+                "currentStage": "准备",
+                "designTask": "",
+                "rapidDivergenceSchemes": [],
+                "deepDivergenceSchemes": [],
+                "convergenceSchemes": []
+            }
+            mongo_users_collection.insert_one(user_data)
+            return {**user_data, "_id": str(user_data["_id"])}
+        else:
+            return {**user, "_id": str(user["_id"])}
+    except BusinessException as be:
+        raise be
+    except Exception as e:
+        raise e
+
+def save(username: str, data):
+    try:
+        if username is None or data is None:
+            raise BusinessException(BUSINESS_FAIL, '用户名字或数据为空')
+        
+        to_update = {
+            "rapidDivergenceSchemes": data['designSchemes']['快速发散'],
+            "deepDivergenceSchemes": data['designSchemes']['深入发散'],
+            "convergenceSchemes": data['designSchemes']['收敛'],
+            "designTask": data['designTask'],
+            "currentStage": data['currentStage']
+        }
+        
+        update_result = mongo_users_collection.update_one(
+            {"username": username},
+            {"$set": to_update}
+        )
+        
+        print(update_result.matched_count)
+
+        if update_result.matched_count == 0:
+            raise BusinessException(BUSINESS_FAIL, '用户不存在')
+    except BusinessException as be:
+        raise be
+    except Exception as e:
+        raise e

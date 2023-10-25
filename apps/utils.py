@@ -4,7 +4,7 @@ BUSINESS_FAIL = 1
 
 class ResponseWrapper:
     @staticmethod
-    def success(data):
+    def success(data=None):
         return {
             'success': True,
             'data': data,
