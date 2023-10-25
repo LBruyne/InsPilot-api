@@ -7,7 +7,6 @@ from settings import rapid_divergence, deep_divergence, convergence_1, convergen
 
 from concurrent.futures import ThreadPoolExecutor
 
-
 def parse_generated(generated_text):
     return generated_text.strip().split('#')
 
@@ -140,74 +139,33 @@ def convergence_1_stimulus(prompts):
             raise BusinessException(BUSINESS_FAIL, '设计方案缺失')
 
         schemes_design_texts = [",".join(scheme.get('designTexts')) for scheme in schemes]
-        schemes_num = 3
-        if len(schemes) < schemes_num:
-            schemes_num = len(schemes)
-
-        if len(schemes) > schemes_num:
-            schemes_design_texts = chat(generate_prompts(convergence_1.prompt_convergence_0, input=schemes_design_texts))
-            print(schemes_design_texts)
-
-        # Step 2: 场景
-        scenes = chat(generate_prompts(convergence_1.prompt_convergence_1, input=schemes_design_texts, num=schemes_num))
-        print(scenes)
-
-        # Step 3: SD 提示
-        sd_prompts = chat(generate_prompts(convergence_1.prompt_convergence_2, input=scenes, num=schemes_num))
-
-        # Step 4: 场景图片
-        sd_tasks = []
-        for idx, prompt in enumerate(parse_generated(sd_prompts)):
-            if prompt == '':
-                continue
-
-            task = {'index': idx, 'prompt': generate_prompts(convergence_1.sd_positive_0, input=prompt),
-                    'task_type': "abstract_image",
-                    'negative_prompt': convergence_1.sd_negative_0, 'options': convergence_1.sd_options_0}
-            sd_tasks.append(task)
-
-        with ThreadPoolExecutor() as executor:
-            futures = [executor.submit(pool.text2Image, task) for task in sd_tasks]
-            abstract_images = [future.result() for future in futures]
-
-        # Step 5: 具体文本
-        concretes = chat(
-            generate_prompts(convergence_1.prompt_convergence_3, input=schemes_design_texts, num=schemes_num))
-        print(concretes)
-        concrete_texts = parse_generated(concretes)
-
-        # Step 6: 产品图提示
-        sd_prompts_2 = chat(
-            generate_prompts(convergence_1.prompt_convergence_4, input=schemes_design_texts, num=schemes_num))
-
-        # Step 7: 产品图生成
-        sd_tasks_2 = []
-        for idx, prompt in enumerate(parse_generated(sd_prompts_2)):
-            if prompt == '':
-                continue
-
-            task = {
-                'index': idx, 
-                'prompt': generate_prompts(convergence_1.sd_positive_1, input=prompt),
-                'task_type': "concrete_image",
-                'negative_prompt': convergence_1.sd_negative_1, 
-                'options': convergence_1.sd_options_1
-            }
-            sd_tasks_2.append(task)
-
-        with ThreadPoolExecutor() as executor:
-            futures = [executor.submit(pool.text2Image, task) for task in sd_tasks_2]
-            concrete_images = [future.result() for future in futures]
-
-        if len(concrete_images) != len(abstract_images) or len(abstract_images) != len(concrete_texts):
+        # 一共方案数
+        schemes_num = len(schemes_design_texts)
+        # 选择数
+        select_num = prompts.get('selectNum')
+        
+        # Step 1: 方案名
+        names = chat(generate_prompts(convergence_1.prompt_convergence_0, input=schemes_design_texts, num=schemes_num))
+        print(names)
+        parsed_names = parse_generated(names)
+        
+        if len(parsed_names) != len(schemes_design_texts):
             raise BusinessException(BUSINESS_FAIL, '生成目标数量不一致')
 
-        result = DesignCreative.to_dict(
-            DesignCreative.from_convergence_1(a_images=[abstract_images[i]['image'] for i in range(len(abstract_images))], c_images=[concrete_images[i]['image'] for i in range(len(concrete_images))],
-                                              c_texts=concrete_texts))
+        packed_schemes = [name + ":" + texts for (name, texts) in zip(parsed_names, schemes_design_texts)]
+        packed_schemes_as_input = "#".join(packed_schemes)
 
+        if schemes_num < select_num:
+            select_num = schemes_num
+
+        # Step 2: 最佳方案
+        selected = chat(generate_prompts(convergence_1.prompt_convergence_1, input=packed_schemes_as_input, select_num=select_num, num=schemes_num))
+        print(selected)
+        parsed_selected = parse_generated(selected)
+        
         return {
-            "result": result
+            "names": parsed_names,
+            "selected": parsed_selected
         }
     except BusinessException as be:
         raise be
@@ -222,7 +180,7 @@ def convergence_2_stimulus(prompts):
             raise BusinessException(BUSINESS_FAIL, '设计方案缺失')
 
         schemes_design_texts = [",".join(scheme.get('designTexts')) for scheme in schemes]
-        generate_num = max(5 - len(schemes_design_texts), 1)
+        generate_num = int(prompts.get('num'))
         product_generate_num = len(schemes_design_texts) * generate_num
 
         # Step 1: 场景
@@ -296,3 +254,6 @@ def convergence_2_stimulus(prompts):
         raise be
     except Exception as e:
         raise e
+
+def start(username: str):
+    

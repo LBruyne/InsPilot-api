@@ -34,21 +34,21 @@ class DesignCreative:
             creatives.append(creative)
         return creatives
 
-    @classmethod
-    def from_convergence_1(cls, c_images: [], a_images: [], c_texts: []):
-        creative = cls(cls.ConvergenceGroupOne, cls.Direct)
-        for i in range(len(c_images)):
-            creative.items.append(
-                DesignCreativeItem(
-                    item_type=DesignCreativeItem.GroupTypeOne,
-                    combinations=[
-                        DesignCreativeItem(item_type=DesignCreativeItem.AbstractImage, image=a_images[i]),
-                        DesignCreativeItem(item_type=DesignCreativeItem.ConcreteImage, image=c_images[i]),
-                        DesignCreativeItem(item_type=DesignCreativeItem.ConcreteText, text=c_texts[i]),
-                    ]
-                )
-            )
-        return creative
+    # @classmethod
+    # def from_convergence_1(cls, c_images: [], a_images: [], c_texts: []):
+    #     creative = cls(cls.ConvergenceGroupOne, cls.Direct)
+    #     for i in range(len(c_images)):
+    #         creative.items.append(
+    #             DesignCreativeItem(
+    #                 item_type=DesignCreativeItem.GroupTypeOne,
+    #                 combinations=[
+    #                     DesignCreativeItem(item_type=DesignCreativeItem.AbstractImage, image=a_images[i]),
+    #                     DesignCreativeItem(item_type=DesignCreativeItem.ConcreteImage, image=c_images[i]),
+    #                     DesignCreativeItem(item_type=DesignCreativeItem.ConcreteText, text=c_texts[i]),
+    #                 ]
+    #             )
+    #         )
+    #     return creative
 
     @classmethod
     def from_convergence_2(cls, c_images: [], a_images: [], c_texts: []):
@@ -94,7 +94,7 @@ class DesignCreativeItem:
 
     def to_dict(self):
         return {
-            'item_type': self.item_type,
+            'type': self.item_type,
             'text': self.text,
             'image': self.image,
             'combinations': [combo.to_dict() for combo in self.combinations] if self.combinations else None,

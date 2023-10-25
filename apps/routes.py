@@ -34,3 +34,26 @@ def generate():
         return jsonify(ResponseWrapper.fail(code=be.code, message=be.message))
     except Exception as e:
         return jsonify(ResponseWrapper.fail(code=BUSINESS_FAIL, message=str(e)))
+
+@apps.route('/paint/save', methods=['POST'])
+def paintSave():
+    try:
+        username = int(request.json.get('username'))
+        # TODO
+        
+        return jsonify(ResponseWrapper.success(data=response_data))
+    except BusinessException as be:
+        return jsonify(ResponseWrapper.fail(code=be.code, message=be.message))
+    except Exception as e:
+        return jsonify(ResponseWrapper.fail(code=BUSINESS_FAIL, message=str(e)))
+    
+@apps.route('/paint/start', methods=['POST'])
+def paintStart():
+    try:
+        username = int(request.json.get('username'))
+        response_data = 
+        return jsonify(ResponseWrapper.success(data=response_data))
+    except BusinessException as be:
+        return jsonify(ResponseWrapper.fail(code=be.code, message=be.message))
+    except Exception as e:
+        return jsonify(ResponseWrapper.fail(code=BUSINESS_FAIL, message=str(e)))
