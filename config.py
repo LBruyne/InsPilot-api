@@ -21,7 +21,7 @@ SD_ENDPOINTS = [
 SD_T2I_ENDPOINT = "/sdapi/v1/txt2img"
 SD_I2I_ENDPOINT = "/sdapi/v1/img2img"
 
-# APPs and types
+# APP_ID
 APP_PAINT = 0
 
 # MongoDB config
