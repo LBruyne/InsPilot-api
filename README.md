@@ -24,7 +24,6 @@ API server for Refinity。
 ├── apps
 ├── config.py
 ├── environment.yml
-├── __pycache__
 ├── README.md
 ├── settings
 └── uwsgi.ini
@@ -45,6 +44,51 @@ API server for Refinity。
     - Stable Diffusion 服务的 API 路径。
     - Azure 提供的 OpenAI GPT 服务相关配置。
     - 数据库的相关配置。
+
+### 数据传输
+
+前后端的数据传输使用标准的HTTP请求规范完成。所有需要对数据库进行更改，或者需要使用生成能力的接口都使用 `POST` 请求，其它查询接口使用  `GET` 请求。
+
+当前端需要使用 `POST` 传输文本数据到后端时，在请求体（Body）中以JSON的形式传输数据（即前端需要在请求头（Header）中加入 `"Content-Type": "application/json"`。一个前端请求示例如下：
+
+```javascript
+const res = await fetch(`${baseUrl}/paint/start`, {
+    method: "POST",
+    body: JSON.stringify({
+        username
+    }),
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+```
+
+相应的，后端需要在对应的路由的处理方法中，从请求体中拿到相应的数据，并完成后续的逻辑：
+
+```python
+@apps.route('/paint/start', methods=['POST'])
+def paintStart():
+    try:
+        username = request.json.get('username')
+        if username == '':
+            raise BusinessException(BUSINESS_FAIL, '用户名字为空')
+        ... 
+```
+
+注意：目前项目中所有传输都是使用JSON格式完成的。如果需要传输图片文件，需要在前端获取文件的BASE64编码，并以字符串的形式将
+图片传输到后端。这种方式更加适合可能需要传输多个图片的需求。
+
+### 大模型能力调用
+
+系统目前采用了GPT和Stable Diffusion两个大模型的能力。代码位于 `agent` 目录下。
+
+- GPT。文本生成能力使用Open AI提供的GPT4。项目中使用Azure提供的 API 接口进行访问。实现了 `chat` 接口，能够提供prompts来生成需要的文本。
+- SD。图片生成能力使用SD。为了运行项目，需要首先在本地搭建SD服务，运行SD实例，项目通过SD的API接口来使用图片生成能力。实现了：
+    - `call_sdapi` 和 `post_sdapi` 两个接口，分别对应使用 `GET` 和 `POST` 方法调用SD服务的API接口。基于此接口，可以封装其它具体的功能接口，如 `text2Image`。
+    - `text2Image` 接口，基于 `post_sdapi` ，调用SD的根据文本生成图片的能力。
+
+    在实现SD时，为了允许系统同时使用多个SD实例的能力，我们封装了一个SD实例池（SDInstancePool），相关代码位于 `agent/sd/py` 中。该实例池接受配置文件中提供的SD实例完成初始化。在使用SD的功能时，实例池会自动分配空闲的SD实例去运行相关的SD任务，并在所有实例都在运行时，阻塞其它的生成任务（直到有实例空闲）。
+
 
 ## Quick start
 

@@ -4,7 +4,6 @@ AZURE_OPENAI_ENDPOINT = 'https://creativity-2.openai.azure.com/'
 AZURE_DEPLOYMENT_NAME = 'CreativitySystem'
 
 # Stable Diffusion API configs
-# SD_ENDPOINT = 'http://127.0.0.1:7864'
 SD_ENDPOINTS = [
     # "https://1d746e46ef3f7776f0.gradio.live",
     # "https://97723806a06cfce859.gradio.live",
