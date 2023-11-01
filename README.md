@@ -95,12 +95,14 @@ def paintStart():
 1. 建立环境并安装依赖（如果已经有环境，可以直接安装依赖）。
 运行 `conda env create -f environment.yml` 即可。
 
-2. 确保后端的各种服务正常运行且各项配置正确，服务可以访问：
+2. 切换到安装的 `conda` 环境 `conda activate $env_name`。
+
+3. 确保后端的各种服务正常运行且各项配置正确，服务可以访问：
 
     - Stable Diffusion
     - Azure 的 GPT 服务
     - MongoDB 数据库已经启动。
 
-3. 在 `conda` 虚拟环境中启动项目：`python app.py`。默认项目会启动在 `localhost:5000` 端口，可以在 `app.py` 中进行修改。
+4. 在 `conda` 虚拟环境中启动项目：`python app.py`。默认项目会启动在 `localhost:5000` 端口，可以在 `app.py` 中进行修改。
 
 <!-- 4. 也可以使用 uWSGI 来实现让 Flask 程序在生产环境中一直运行的效果：首先 `pip install uwsgi` 安装服务器，然后 `nohup uwsgi --ini uwsgi.ini &` 来启动服务。这样可以通过 uwsgi 来访问服务器（此时端口为 `.int` 文件中配置的端口）。 -->

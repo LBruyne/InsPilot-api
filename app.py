@@ -9,9 +9,9 @@ app = Flask(__name__)
 
 # logging.basicConfig(level=logging.DEBUG)
 
-CORS(app)
-
 app.register_blueprint(apps)
+
+CORS(app)
 
 if __name__ == '__main__':
     # app.config['DEBUG'] = True
