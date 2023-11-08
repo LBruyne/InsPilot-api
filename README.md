@@ -105,4 +105,4 @@ def paintStart():
 
 4. 在 `conda` 虚拟环境中启动项目：`python app.py`。默认项目会启动在 `localhost:5000` 端口，可以在 `app.py` 中进行修改。
 
-<!-- 4. 也可以使用 uWSGI 来实现让 Flask 程序在生产环境中一直运行的效果：首先 `pip install uwsgi` 安装服务器，然后 `nohup uwsgi --ini uwsgi.ini &` 来启动服务。这样可以通过 uwsgi 来访问服务器（此时端口为 `.int` 文件中配置的端口）。 -->
+5. 也可以使用 gunicorn 来实现让 Flask 程序在生产环境中一直运行的效果：首先 `pip install gunicorn` 安装服务器，然后 `nohup gunicorn -w 4 app:app &` 来启动服务。这将忽略挂起信号并在后台运行Gunicorn进程。
