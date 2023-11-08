@@ -16,16 +16,12 @@ def index():
 @apps.route('/generate', methods=['POST'])
 def generate():
     try:
-        # app_id = int(request.form.get('appid'))
-        # type_ = int(request.form.get('type'))
-        # prompts = request.form.get('prompts')
-        # data = request.files['image'].read()
         app_id = int(request.json.get('appid'))
         type_ = int(request.json.get('type'))
+        # 所有前端传输来的数据（包含图片）都从prompt中获取
         prompts = request.json.get('prompts')
 
         if app_id == 0:
-            # response_data = paintHandler.handle_request(type_, prompts, data)
             response_data = paintHandler.handle_request(type_, prompts)
         else:
             raise BusinessException(message="应用不存在")

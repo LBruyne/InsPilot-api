@@ -35,16 +35,17 @@ class SDInstancePool:
             if task["options"] is not None:
                 payload.update(task["options"])
 
-            print(task["index"])
+            print("t2i: " + str(task["index"]))
             print(payload)
             r = post_sdapi(url, payload)
+            print("t2i res.")
             return {
                 "index": task["index"],
                 "type": task["task_type"],
                 "image": r['images'][0]
             }
-        except AgentException as e:
-            print(f"Error: {str(e)}")
+        except Exception as e:
+            print(f"Error: 调用Stable Diffusion失败，{str(e)}")
             return {
                 "index": task["index"],
                 "type": task["task_type"],
@@ -73,4 +74,4 @@ def post_sdapi(url: str, payload, headers=None):
         raise AgentException(f"调用 Stable Diffusion 失败：URI {str(url)}，{str(e)}")
 
 
-pool = SDInstancePool(config.SD_ENDPOINTS)
+sd_pool = SDInstancePool(config.SD_ENDPOINTS)

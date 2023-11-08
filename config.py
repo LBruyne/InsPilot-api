@@ -2,6 +2,12 @@
 AZURE_OPENAI_KEY = 'f30370e2fe464ed7a277c36b552e10e6'
 AZURE_OPENAI_ENDPOINT = 'https://creativity-2.openai.azure.com/'
 AZURE_DEPLOYMENT_NAME = 'CreativitySystem'
+AZURE_GPT_INSTANCE = 10
+
+# OpenAI GPT API configs
+OPENAI_KEY = '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'
+OPENAI_GPT_INSTANCE = 10
+OPENAI_CHAT_ENDPOINT = "https://api.openai.com/v1/chat/completions"
 
 # Stable Diffusion API configs
 SD_ENDPOINTS = [

@@ -1,7 +1,7 @@
 from apps.utils import BusinessException, BUSINESS_FAIL
 from apps.paint.creatives import DesignCreative
-from agent.gpt import chat
-from agent.sd import pool
+from agent.sd import sd_pool
+from agent.gpt import gpt_pool
 
 from settings import rapid_divergence, deep_divergence, convergence_1, convergence_2
 
@@ -30,15 +30,18 @@ def rapid_divergence_stimulus(prompts):
             raise BusinessException(BUSINESS_FAIL, '设计数量缺失')
 
         # Step 1: 产品
-        products = chat(generate_prompts(rapid_divergence.prompt_rapid_divergence_0, input=task, num=num))
+        gpt_task = {"messages": generate_prompts(rapid_divergence.prompt_rapid_divergence_0, input=task, num=num)}
+        products = gpt_pool.chat(gpt_task)['text']
         print(products)
 
         # Step 2: 场景
-        scenes = chat(generate_prompts(rapid_divergence.prompt_rapid_divergence_1, input=products, num=num))
+        gpt_task = {"messages": generate_prompts(rapid_divergence.prompt_rapid_divergence_1, input=products, num=num)}
+        scenes = gpt_pool.chat(gpt_task)['text']
         print(scenes)
 
         # Step 3: SD 提示
-        sd_prompts = chat(generate_prompts(rapid_divergence.prompt_rapid_divergence_2, input=scenes, num=num))
+        gpt_task = {"messages": generate_prompts(rapid_divergence.prompt_rapid_divergence_2, input=scenes, num=num)}
+        sd_prompts = gpt_pool.chat(gpt_task)['text']
 
         # Step 4: 并行生成 SD 图片
         sd_tasks = []
@@ -50,13 +53,23 @@ def rapid_divergence_stimulus(prompts):
                     'task_type': "abstract_image",
                     'negative_prompt': rapid_divergence.sd_negative_0, 'options': rapid_divergence.sd_options_0}
             sd_tasks.append(task)
+            
+            # dall-e-3的调用
+            # task = {'index': idx, 'prompt': generate_prompts(rapid_divergence.sd_positive_0, input=prompt),
+            #         'task_type': "abstract_image"}
+            # sd_tasks.append(task)
 
         with ThreadPoolExecutor() as executor:
-            futures = [executor.submit(pool.text2Image, task) for task in sd_tasks]
+            futures = [executor.submit(sd_pool.text2Image, task) for task in sd_tasks]
             images = [future.result() for future in futures]
+            
+            # dall-e-3的调用
+            # futures = [executor.submit(gpt_pool.text2Image, task) for task in sd_tasks]
+            # images = [future.result() for future in futures]          
 
         # Step 5: 抽象文本
-        abstracts = chat(generate_prompts(rapid_divergence.prompt_rapid_divergence_3, input=products, num=num))
+        gpt_task = {"messages": generate_prompts(rapid_divergence.prompt_rapid_divergence_3, input=products, num=num)}
+        abstracts = gpt_pool.chat(gpt_task)['text']
         print(abstracts)
         abstract_texts = parse_generated(abstracts)
 
@@ -84,18 +97,24 @@ def deep_divergence_stimulus(prompts):
         scheme_id = prompts.get('schemeId')
         if scheme_id is None:
             raise BusinessException(BUSINESS_FAIL, '关联方案缺失')
+        image = prompts.get('designImage')
+        if image is None:
+            raise BusinessException(BUSINESS_FAIL, '设计图片缺失')
 
         texts = ','.join(texts)
         # Step 1: 产品
-        products = chat(generate_prompts(deep_divergence.prompt_deep_divergence_0, input=texts, num=generate_num))
+        gpt_task = {"messages": generate_prompts(deep_divergence.prompt_deep_divergence_0, input=texts, num=generate_num)}
+        products = gpt_pool.chat(gpt_task)['text']
         print(products)
 
         # Step 2: 场景
-        scenes = chat(generate_prompts(deep_divergence.prompt_deep_divergence_1, input=products, num=generate_num))
+        gpt_task = {"messages": generate_prompts(deep_divergence.prompt_deep_divergence_1, input=products, num=generate_num)}
+        scenes = gpt_pool.chat(gpt_task)['text']
         print(scenes)
 
         # Step 3: SD 提示
-        sd_prompts = chat(generate_prompts(deep_divergence.prompt_deep_divergence_2, input=scenes, num=generate_num))
+        gpt_task = {"messages": generate_prompts(deep_divergence.prompt_deep_divergence_2, input=scenes, num=generate_num)}
+        sd_prompts = gpt_pool.chat(gpt_task)['text']
 
         # Step 4: 图片
         sd_tasks = []
@@ -109,16 +128,18 @@ def deep_divergence_stimulus(prompts):
             sd_tasks.append(task)
 
         with ThreadPoolExecutor() as executor:
-            futures = [executor.submit(pool.text2Image, task) for task in sd_tasks]
+            futures = [executor.submit(sd_pool.text2Image, task) for task in sd_tasks]
             images = [future.result() for future in futures]
 
         # Step 5: 抽象文本
-        abstracts = chat(generate_prompts(deep_divergence.prompt_deep_divergence_3, input=products, num=generate_num))
+        gpt_task = {"messages": generate_prompts(deep_divergence.prompt_deep_divergence_3, input=products, num=generate_num)}
+        abstracts = gpt_pool.chat(gpt_task)['text']
         print(abstracts)
         abstract_texts = parse_generated(abstracts)
 
         # Step 6: 具体文本
-        concretes = chat(generate_prompts(deep_divergence.prompt_deep_divergence_4, input=products, num=generate_num))
+        gpt_task = {"messages": generate_prompts(deep_divergence.prompt_deep_divergence_4, input=products, num=generate_num)}
+        concretes = gpt_pool.chat(gpt_task)['text']
         print(concretes)
         concrete_texts = parse_generated(concretes)
 
@@ -141,18 +162,33 @@ def deep_divergence_stimulus(prompts):
 
 def convergence_1_stimulus(prompts):
     try:
+        designTask = prompts.get('designTask')
+        if not designTask:
+            raise BusinessException(BUSINESS_FAIL, '方案描述缺失')
+        
         schemes = prompts.get('schemes')
         if not schemes or not isinstance(schemes, list) or len(schemes) == 0:
             raise BusinessException(BUSINESS_FAIL, '设计方案缺失')
 
         schemes_design_texts = [",".join(scheme.get('designTexts')) for scheme in schemes]
+        schemes_images = [scheme.get('designImage') for scheme in schemes]
         # 一共方案数
         schemes_num = len(schemes_design_texts)
         # 选择数
-        select_num = prompts.get('selectNum')
+        select_num = int(prompts.get('selectNum'))
         
         # Step 1: 方案名
-        names = chat(generate_prompts(convergence_1.prompt_convergence_0, input=schemes_design_texts, num=schemes_num))
+        def generate_description(input):
+            res = ""
+            for i, text in enumerate(input, start=1):
+                res += f"第{i}张图：{text}"
+                if i != len(input):
+                    res += "，"
+            return res
+        description = generate_description(schemes_design_texts)
+        gpt_task = {"prompt": generate_prompts(convergence_1.prompt_convergence_0, task=designTask, input=description),
+                    "images": schemes_images}
+        names = gpt_pool.ask_image(gpt_task)['text']
         print(names)
         parsed_names = parse_generated(names)
         
@@ -166,7 +202,8 @@ def convergence_1_stimulus(prompts):
             select_num = schemes_num
 
         # Step 2: 最佳方案
-        selected = chat(generate_prompts(convergence_1.prompt_convergence_1, input=packed_schemes_as_input, select_num=select_num, num=schemes_num))
+        gpt_task = {"messages": generate_prompts(convergence_1.prompt_convergence_1, input=packed_schemes_as_input, select_num=select_num, num=schemes_num)}
+        selected = gpt_pool.chat(gpt_task)['text']
         print(selected)
         parsed_selected = parse_generated(selected)
         
@@ -191,22 +228,24 @@ def convergence_2_stimulus(prompts):
         product_generate_num = len(schemes_design_texts) * generate_num
 
         # Step 1: 场景
-        scenes = chat(generate_prompts(convergence_2.prompt_convergence_0, input_num=len(schemes_design_texts), num=generate_num, input=schemes_design_texts, total_num=product_generate_num))
+        gpt_task = {"messages": generate_prompts(convergence_2.prompt_convergence_0, input_num=len(schemes_design_texts), num=generate_num, input=schemes_design_texts, total_num=product_generate_num)}
+        scenes = gpt_pool.chat(gpt_task)['text']
         print(scenes)
 
         # Step 2: 场景提示
-        sd_prompts = chat(generate_prompts(convergence_2.prompt_convergence_1, input=scenes, num=product_generate_num))
+        gpt_task = {"messages": generate_prompts(convergence_2.prompt_convergence_1, input=scenes, num=product_generate_num)}
+        sd_prompts = gpt_pool.chat(gpt_task)['text']
         
         # Step 3: 具体文本
-        concretes = chat(
-            generate_prompts(convergence_2.prompt_convergence_2, input_num=len(schemes_design_texts), num=generate_num, input=schemes_design_texts, total_num=product_generate_num))
+        gpt_task = {"messages": generate_prompts(convergence_2.prompt_convergence_2, input_num=len(schemes_design_texts), num=generate_num, input=schemes_design_texts, total_num=product_generate_num)}
+        concretes = gpt_pool.chat(gpt_task)['text']
         print(concretes)
         concrete_texts = parse_generated(concretes)
 
         # Step 4: 产品图提示
-        sd_prompts_2 = chat(
-            generate_prompts(convergence_2.prompt_convergence_3, input=concretes, num=product_generate_num))
-        
+        gpt_task = {"messages": generate_prompts(convergence_2.prompt_convergence_3, input=concretes, num=product_generate_num)}
+        sd_prompts_2 = gpt_pool.chat(gpt_task)['text']
+    
         # Step 5: 场景和产品图
         all_tasks = []
         for idx, prompt in enumerate(parse_generated(sd_prompts)):
@@ -236,7 +275,7 @@ def convergence_2_stimulus(prompts):
 
         # 一次性提交所有任务
         with ThreadPoolExecutor() as executor:
-            futures = [executor.submit(pool.text2Image, task) for task in all_tasks]
+            futures = [executor.submit(sd_pool.text2Image, task) for task in all_tasks]
             results = [future.result() for future in futures]
 
         abstract_images = [None] * (len(results) // 2)
