@@ -20,6 +20,14 @@ def parse_generated(generated_text):
 def generate_prompts(template: str, **input): 
     return template.format(**input)
 
+def generate_description(input):
+    res = ""
+    for i, text in enumerate(input, start=1):
+        res += f"第{i}张图：{text}"
+        if i != len(input):
+            res += "，"
+    return res
+
 def rapid_divergence_stimulus(prompts):
     try:
         task = prompts.get('task')
@@ -91,6 +99,9 @@ def rapid_divergence_stimulus(prompts):
 def deep_divergence_stimulus(prompts):
     generate_num = 3
     try:
+        designTask = prompts.get('designTask')  
+        if designTask is None:
+            raise BusinessException(BUSINESS_FAIL, '设计任务缺失')      
         texts = prompts.get('designTexts')
         if not texts or not isinstance(texts, list) or len(texts) == 0:
             raise BusinessException(BUSINESS_FAIL, '设计文本缺失')
@@ -102,6 +113,14 @@ def deep_divergence_stimulus(prompts):
             raise BusinessException(BUSINESS_FAIL, '设计图片缺失')
 
         texts = ','.join(texts)
+        
+        # Step 0: 图像理解
+        gpt_task = {"prompt": generate_prompts(deep_divergence.prompt_deep_divergence_vision, task=designTask, input=texts),
+                    "images": [image]}
+        name = gpt_pool.ask_image(gpt_task)['text']
+        print('***'+name+'***')
+        texts = name + ':' +texts
+        
         # Step 1: 产品
         gpt_task = {"messages": generate_prompts(deep_divergence.prompt_deep_divergence_0, input=texts, num=generate_num)}
         products = gpt_pool.chat(gpt_task)['text']
@@ -178,13 +197,6 @@ def convergence_1_stimulus(prompts):
         select_num = int(prompts.get('selectNum'))
         
         # Step 1: 方案名
-        def generate_description(input):
-            res = ""
-            for i, text in enumerate(input, start=1):
-                res += f"第{i}张图：{text}"
-                if i != len(input):
-                    res += "，"
-            return res
         description = generate_description(schemes_design_texts)
         gpt_task = {"prompt": generate_prompts(convergence_1.prompt_convergence_0, task=designTask, input=description),
                     "images": schemes_images}

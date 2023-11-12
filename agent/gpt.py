@@ -24,7 +24,7 @@ class GPTInstancePool:
         try:
             print("chat: ")
             print(task["messages"])
-            response = openai.ChatCompletion.create(
+            response = openai.chat.completions.create(
                 model="gpt-4",
                 messages=[
                     # {"role": "system", "content": "Assistant is a large language model trained by OpenAI."},
@@ -34,7 +34,9 @@ class GPTInstancePool:
                 # engine=config.AZURE_DEPLOYMENT_NAME,
                 # stream=True
             )
-            r = response['choices'][0]['message']['content'].replace('\n', ' ').replace(' .', '.').strip()
+            #r = response['choices'][0]['message']['content'].replace('\n', ' ').replace(' .', '.').strip()
+            r = response.choices[0].message.content.replace('\n', ' ').replace(' .', '.').strip()
+            
             return {
                 "text": r
             }
@@ -91,9 +93,9 @@ class GPTInstancePool:
                 "image_url": {
                     "url": f"{image}"
                 }
-            } for image in task['images']]
+            } for image in task['images']]    
         
-            response = openai.ChatCompletion.create(
+            response = openai.chat.completions.create(
                 model="gpt-4-vision-preview",
                 messages=[
                     {
@@ -110,8 +112,8 @@ class GPTInstancePool:
                 max_tokens=300,
             )
             # print(response)
-
-            r = response['choices'][0]['message']['content'].replace('\n', ' ').replace(' .', '.').strip()
+            #r = response['choices'][0]['message']['content'].replace('\n', ' ').replace(' .', '.').strip()
+            r = response.choices[0].message.content.replace('\n', ' ').replace(' .', '.').strip()
             print("ask image res: " + str(r))
             return {
                 "text": r
