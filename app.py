@@ -11,7 +11,8 @@ app = Flask(__name__)
 
 app.register_blueprint(apps)
 
-CORS(app)
+# 如果 nginx 中配置了 Access-Origin，则这里不需要开启CORS
+# CORS(app)
 
 if __name__ == '__main__':
     # app.config['DEBUG'] = True
