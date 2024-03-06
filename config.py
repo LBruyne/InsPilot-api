@@ -1,21 +1,16 @@
 # Azure GPT API configs
-AZURE_OPENAI_KEY = 'f30370e2fe464ed7a277c36b552e10e6'
-AZURE_OPENAI_ENDPOINT = 'https://creativity-2.openai.azure.com/'
-AZURE_DEPLOYMENT_NAME = 'CreativitySystem'
+AZURE_OPENAI_KEY = '<YOUR-KEY>'
+AZURE_OPENAI_ENDPOINT = '<YOUR-AZURE-ENDPOINT>'
+AZURE_DEPLOYMENT_NAME = '<YOUR-AZURE-DEPLOYMENT>'
 AZURE_GPT_INSTANCE = 10
 
 # OpenAI GPT API configs
-OPENAI_KEY = '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'
+OPENAI_KEY = '<YOUR-KEY>'
 OPENAI_GPT_INSTANCE = 10
 OPENAI_CHAT_ENDPOINT = "https://api.openai.com/v1/chat/completions"
 
 # Stable Diffusion API configs
 SD_ENDPOINTS = [
-    # "https://1d746e46ef3f7776f0.gradio.live",
-    # "https://97723806a06cfce859.gradio.live",
-    # "https://4cb394e29d9a3b3eda.gradio.live",
-    # "https://b88a05f11796f60308.gradio.live",
-    # "https://4a9cf8469c4d283131.gradio.live"
     "http://127.0.0.1:7864",
     "http://127.0.0.1:7865",
     "http://127.0.0.1:7866",
